@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PassStrength AI | Cyber Shield – Smart Password Analyzer</title>
+    <meta name="description" content="AI-powered password strength checker with machine learning, entropy analysis, pattern detection, and crack-time estimation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- Animated background grid -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 3L5 10v10c0 9 6.5 17.4 15 19.5C29.5 37.4 36 29 36 20V10L20 3z" fill="url(#shieldGrad)" opacity="0.9"/>
+                    <path d="M14 20l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#00d4ff"/>
+                            <stop offset="100%" stop-color="#0062ff"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>PassStrength <span class="accent">AI</span></h1>
+                <p class="tagline">Next-Gen Password Intelligence</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-pill" id="model-status">
+                <span class="status-dot"></span>
+                <span>AI Ready</span>
+            </div>
+            <div class="theme-toggle">
+                <span class="theme-label">🌙</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-switch">
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-label">☀️</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ── MAIN ──────────────────────────────────────────── -->
+<main>
+
+    <!-- PASSWORD INPUT -->
+    <section class="analyzer-section">
+        <div class="input-wrapper">
+            <div class="input-card">
+                <label class="input-label" for="password-input">ANALYZE PASSWORD</label>
+                <div class="input-group" id="input-group">
+                    <input
+                        type="password"
+                        id="password-input"
+                        placeholder="Enter or paste a password..."
+                        autocomplete="new-password"
+                        spellcheck="false"
+                    >
+                    <div class="input-actions">
+                        <button id="toggle-visibility" class="icon-btn" title="Show/hide password">
+                            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button id="analyze-btn" class="primary-btn pulse-btn">
+                            <span>Analyze</span>
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Strength bar beneath input -->
+                <div class="quick-meter-wrap">
+                    <div class="quick-meter-bar" id="quick-meter"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS GRID -->
+        <div class="results-grid">
+
+            <!-- CARD 1: Strength -->
+            <div class="card card-strength" style="--delay:0.05s">
+                <div class="card-header">
+                    <span class="card-icon">⚡</span>
+                    <h2>Strength Analysis</h2>
+                </div>
+                <div class="strength-hero">
+                    <div class="strength-ring-wrap">
+                        <svg class="strength-ring" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="50" fill="none" stroke-width="10"/>
+                            <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="50" fill="none" stroke-width="10"
+                                stroke-dasharray="314"
+                                stroke-dashoffset="314"
+                                stroke-linecap="round"
+                                transform="rotate(-90 60 60)"/>
+                        </svg>
+                        <div class="ring-center">
+                            <span class="score-num" id="complexity-score">0</span>
+                            <span class="score-denom">/100</span>
+                        </div>
+                    </div>
+                    <div class="strength-info">
+                        <div class="strength-label-wrap">
+                            <span id="strength-label" class="strength-label label-default">Awaiting Input</span>
+                        </div>
+                        <div class="confidence-badge" id="ml-confidence">ML Confidence: --%</div>
+                        <div class="strength-bar-wrap">
+                            <div class="strength-bar-track">
+                                <div class="strength-bar-fill" id="strength-meter"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Metrics -->
+            <div class="card card-metrics" style="--delay:0.1s">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h2>Character Metrics</h2>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-tile tile-blue">
+                        <span class="metric-val" id="metric-length">0</span>
+                        <span class="metric-key">Length</span>
+                    </div>
+                    <div class="metric-tile tile-cyan">
+                        <span class="metric-val" id="metric-uppercase">0</span>
+                        <span class="metric-key">Uppercase</span>
+                    </div>
+                    <div class="metric-tile tile-green">
+                        <span class="metric-val" id="metric-lowercase">0</span>
+                        <span class="metric-key">Lowercase</span>
+                    </div>
+                    <div class="metric-tile tile-amber">
+                        <span class="metric-val" id="metric-digits">0</span>
+                        <span class="metric-key">Digits</span>
+                    </div>
+                    <div class="metric-tile tile-purple">
+                        <span class="metric-val" id="metric-symbols">0</span>
+                        <span class="metric-key">Symbols</span>
+                    </div>
+                    <div class="metric-tile tile-pink">
+                        <span class="metric-val" id="metric-unique">0%</span>
+                        <span class="metric-key">Unique</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: Entropy -->
+            <div class="card card-entropy" style="--delay:0.15s">
+                <div class="card-header">
+                    <span class="card-icon">🔬</span>
+                    <h2>Entropy Analysis</h2>
+                </div>
+                <div class="entropy-values">
+                    <div class="entropy-stat">
+                        <span class="entropy-val cyan" id="shannon-val">0.00</span>
+                        <span class="entropy-lbl">Shannon (bits)</span>
+                    </div>
+                    <div class="entropy-divider"></div>
+                    <div class="entropy-stat">
+                        <span class="entropy-val green" id="search-val">0.00</span>
+                        <span class="entropy-lbl">Search Space</span>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="entropy-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- CARD 4: Crack Time -->
+            <div class="card card-crack" style="--delay:0.2s">
+                <div class="card-header">
+                    <span class="card-icon">⏱️</span>
+                    <h2>Crack Time Estimates</h2>
+                </div>
+                <div class="crack-list" id="crack-times">
+                    <div class="crack-row skeleton-row"></div>
+                    <div class="crack-row skeleton-row"></div>
+                    <div class="crack-row skeleton-row"></div>
+                    <div class="crack-row skeleton-row"></div>
+                </div>
+            </div>
+
+            <!-- CARD 5: Patterns -->
+            <div class="card card-patterns" style="--delay:0.25s">
+                <div class="card-header">
+                    <span class="card-icon">🔎</span>
+                    <h2>Detected Patterns</h2>
+                </div>
+                <div class="chip-wrap" id="patterns-list">
+                    <span class="muted-hint">Enter a password to detect patterns</span>
+                </div>
+            </div>
+
+            <!-- CARD 6: AI Prediction -->
+            <div class="card card-ai" style="--delay:0.3s">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <h2>AI Prediction</h2>
+                </div>
+                <div class="ml-bars" id="ml-predictions">
+                    <span class="muted-hint">Awaiting input…</span>
+                </div>
+            </div>
+
+            <!-- CARD 7: Feedback – full width -->
+            <div class="card card-feedback full-width" style="--delay:0.35s">
+                <div class="card-header">
+                    <span class="card-icon">💡</span>
+                    <h2>Security Recommendations</h2>
+                </div>
+                <ul class="feedback-list" id="feedback-list">
+                    <li class="feedback-item feedback-info">
+                        <span class="fi-icon">ℹ️</span>
+                        <span>Enter a password above to receive personalised recommendations.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div><!-- /results-grid -->
+    </section>
+
+    <!-- GENERATOR SECTION -->
+    <section class="gen-section">
+        <div class="section-title">
+            <span class="section-icon">🔑</span>
+            <h2>Secure Password Generator</h2>
+        </div>
+        <div class="card gen-card">
+            <div class="gen-layout">
+                <div class="gen-controls">
+                    <!-- Length slider -->
+                    <div class="gen-slider-row">
+                        <span class="gen-ctrl-label">Length</span>
+                        <input type="range" id="gen-length" min="4" max="128" value="16" class="cyber-range">
+                        <span class="gen-len-badge" id="gen-length-val">16</span>
+                    </div>
+                    <!-- Toggles -->
+                    <div class="gen-toggles">
+                        <label class="cyber-check">
+                            <input type="checkbox" id="gen-uppercase" checked>
+                            <span class="cc-box"></span>
+                            <span class="cc-label">Uppercase <em>A–Z</em></span>
+                        </label>
+                        <label class="cyber-check">
+                            <input type="checkbox" id="gen-lowercase" checked>
+                            <span class="cc-box"></span>
+                            <span class="cc-label">Lowercase <em>a–z</em></span>
+                        </label>
+                        <label class="cyber-check">
+                            <input type="checkbox" id="gen-digits" checked>
+                            <span class="cc-box"></span>
+                            <span class="cc-label">Digits <em>0–9</em></span>
+                        </label>
+                        <label class="cyber-check">
+                            <input type="checkbox" id="gen-symbols" checked>
+                            <span class="cc-box"></span>
+                            <span class="cc-label">Symbols <em>!@#$</em></span>
+                        </label>
+                        <label class="cyber-check">
+                            <input type="checkbox" id="gen-exclude-ambiguous">
+                            <span class="cc-box"></span>
+                            <span class="cc-label">Exclude Ambiguous <em>0Ol1I</em></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Output -->
+                <div class="gen-output">
+                    <div class="gen-password-box" id="generated-password">Click Generate →</div>
+                    <div class="gen-output-footer">
+                        <span class="gen-strength-badge" id="gen-strength">—</span>
+                        <div class="gen-btns">
+                            <button id="copy-btn" class="ghost-btn" title="Copy to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                Copy
+                            </button>
+                            <button id="generate-btn" class="primary-btn">
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+    <p>© 2026 <strong>PassStrength AI</strong> &nbsp;·&nbsp; Built with FastAPI &amp; scikit-learn &nbsp;·&nbsp; Passwords are never stored or logged.</p>
+</footer>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

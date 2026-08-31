@@ -1,0 +1,35 @@
+{
+    "model_type": "RandomForest",
+    "accuracy": 0.998,
+    "precision": 0.998020942408377,
+    "recall": 0.998,
+    "f1_score": 0.998000568322214,
+    "feature_names": [
+        "length",
+        "uppercase_count",
+        "lowercase_count",
+        "digit_count",
+        "special_char_count",
+        "unique_char_ratio",
+        "char_diversity",
+        "shannon_entropy",
+        "has_sequential",
+        "has_repeated",
+        "has_keyboard_walk",
+        "has_dictionary_word",
+        "has_leetspeak",
+        "search_space_log",
+        "complexity_score"
+    ],
+    "num_features": 15,
+    "classes": [
+        "Very Weak",
+        "Weak",
+        "Medium",
+        "Strong",
+        "Very Strong"
+    ],
+    "training_date": "2026-07-30",
+    "training_samples": 10000,
+    "cross_val_mean": 0.9974000000000001
+}
