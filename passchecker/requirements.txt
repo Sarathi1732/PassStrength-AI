@@ -1,19 +1,10 @@
-# PassStrength AI - Python Dependencies
-# Core Web Framework
-fastapi>=0.100.0
-uvicorn[standard]>=0.20.0
-pydantic>=2.0.0
-python-multipart>=0.0.5
-jinja2>=3.1.0
-aiofiles>=23.0.0
-
-# Machine Learning
-scikit-learn>=1.3.0
-pandas>=2.0.0
-numpy>=1.24.0
-joblib>=1.3.0
-xgboost>=2.0.0
-
-# Testing
-pytest>=8.0.0
-httpx>=0.24.0
+fastapi
+uvicorn[standard]
+pydantic
+python-multipart
+jinja2
+aiofiles
+scikit-learn
+pandas
+numpy
+joblib
